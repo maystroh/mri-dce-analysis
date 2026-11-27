@@ -41,7 +41,11 @@ Install mri-dce-analysis and guide me through breast DCE MRI inference and revie
    Docker Hub, or build the image locally from this checkout?"
    Wait for my answers before installing dependencies, pulling or building an
    image, or downloading the model. Follow only the selected setup below and
-   keep that choice for every later step. Use Linux or WSL2 on Windows.
+   keep that choice for every later step. Detect my operating system and shell,
+   check the selected setup's requirements, and adapt commands, environment
+   activation and paths accordingly. The Docker launcher mri-docker.sh uses
+   Bash; ensure Bash and Docker are available together. Suggest WSL2 on Windows
+   only if needed for that setup.
    The commands below use CPU. If I request GPU, follow docs/DOCKER.md or
    docs/INSTALL.md and adapt the selected setup and inference commands.
 
@@ -108,8 +112,9 @@ Install mri-dce-analysis and guide me through breast DCE MRI inference and revie
    output folder, run name, and whether I will open the viewer locally or from
    another computer. Set INPUT_DIR (or EXAMS_JSON), OUTPUT_DIR and RUN_NAME to
    these agreed values in the shell that runs the commands below, or replace
-   the variables with the agreed values. Quote paths containing spaces. On
-   Windows, use WSL2 paths such as /mnt/c/... for files on the C: drive.
+   the variables with the agreed values. Quote paths containing spaces and use
+   paths valid for the selected shell. If using WSL2, Windows files on the C:
+   drive are accessed through paths such as /mnt/c/data/exams.
    For the Python viewer, also set VIEWER_HOST=127.0.0.1 for local access or
    VIEWER_HOST=0.0.0.0 for access from another computer; see docs/DOCKER.md and
    docs/VIEWER_PACKAGING.md for remote access and SSH tunnels.

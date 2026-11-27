@@ -3,7 +3,9 @@
 Install in your own Python environment to change or extend the code. To run without
 installing Python, use the [Docker image](USER_GUIDE.md#run-with-docker).
 
-Use Python 3.10 on Linux and a dedicated virtual environment.
+The Python setup has been validated on Linux with Python 3.10 in a dedicated
+virtual environment. The commands below use Bash; adapt the Python executable
+and environment activation command to your operating system and shell.
 
 ## Install the package
 
