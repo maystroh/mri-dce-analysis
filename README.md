@@ -1,5 +1,7 @@
 # mri-dce-analysis
 
+https://github.com/user-attachments/assets/3110b73d-a8eb-45fa-a76d-137671586d06
+
 Tools for breast dynamic contrast-enhanced (DCE) MRI analysis and quality control.
 
 - DICOM and NIfTI input.
@@ -17,7 +19,7 @@ The project paper link will be added soon.
 ## For agents
 
 Copy the instructions below into any AI coding agent with terminal access to the
-computer that will run the analysis. Use Linux or WSL2 on Windows. If Git is not
+computer that will run the analysis. If Git is not
 installed, help the user install it before cloning.
 
 ```text
