@@ -10,7 +10,7 @@ Tools for breast dynamic contrast-enhanced (DCE) MRI analysis and quality contro
 - Motion measurement.
 - A review app to accept or reject the breast-region and nipple masks, exam by exam.
 
-## For human
+## For humans
 
 For human readers: [full installation, analysis and viewer guide](docs/USER_GUIDE.md).
 
@@ -18,7 +18,7 @@ The project paper link will be added soon.
 
 ## For agents
 
-Copy the instructions below into any AI coding agent with terminal access to the
+Copy the instructions below into any AI agent with terminal access to the
 computer that will run the analysis.
 
 ```text
