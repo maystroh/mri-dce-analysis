@@ -33,32 +33,72 @@ Install mri-dce-analysis and guide me through breast DCE MRI inference and revie
 2) Go into the project folder:
    cd mri-dce-analysis
    Run all following commands from this folder. Read docs/USER_GUIDE.md,
-   docs/INPUT_DATASETS.md and docs/VIEWER_REVIEW.md before proceeding.
+   docs/INSTALL.md, docs/INPUT_DATASETS.md and docs/VIEWER_REVIEW.md.
 
-3) Install dependencies and prepare the model:
-   Check Git LFS, Docker and the Compose plugin:
-   git lfs version
-   docker info
-   docker compose version
-   Help me install missing prerequisites or start Docker as needed. On Windows,
-   check that Docker is available inside WSL2. Use CPU by default; if I request
-   GPU, follow the GPU setup in docs/DOCKER.md.
+3) Ask me how I want to install and run the project:
+   First ask: "Would you like to use Docker or a Python virtual environment?"
+   If I choose Docker, also ask: "Would you like to use the prebuilt image from
+   Docker Hub, or build the image locally from this checkout?"
+   Wait for my answers before installing dependencies, pulling or building an
+   image, or downloading the model. Follow only the selected setup below and
+   keep that choice for every later step. Use Linux or WSL2 on Windows.
+   The commands below use CPU. If I request GPU, follow docs/DOCKER.md or
+   docs/INSTALL.md and adapt the selected setup and inference commands.
 
-   Download the example exams and verify their checksums:
-   git lfs install
-   git lfs pull
-   sha256sum -c examples/SHA256SUMS
+   Docker with the prebuilt Docker Hub image:
+   - Check docker info; help me install Docker or start its daemon if needed.
+   - Pull the image and select it for all subsequent Docker commands:
+     docker pull h2thez/mri-dce-analysis:latest
+     export MRI_IMAGE=h2thez/mri-dce-analysis:latest
+   - The image includes dependencies, the model and the example exams. Skip
+     local image building and separate host model/example downloads.
+   - Keep MRI_IMAGE set in every shell that runs mri-docker.sh, or prefix each
+     command with MRI_IMAGE=h2thez/mri-dce-analysis:latest.
+     bash mri-docker.sh run --help
 
-   Build the image, which installs all Python runtime dependencies, downloads
-   the landmark model, verifies its checksum and checks that it loads:
-   docker compose build
-   bash mri-docker.sh run --help
-   Use the image built from this checkout for subsequent commands. Check for an
-   MRI_IMAGE environment override and use the default local image unless I have
-   chosen another image. For installation without Docker, follow docs/INSTALL.md.
+   Docker with a local build:
+   - Check docker info, docker compose version and git lfs version. Help me
+     install missing prerequisites or start Docker if needed.
+   - Download the example exams and verify them:
+     git lfs install
+     git lfs pull
+     sha256sum -c examples/SHA256SUMS
+   - Set MRI_IMAGE to the local image tag in compose.yaml and mri-docker.sh
+     (currently mri-dce-analysis:0.2.5), then build and check it:
+     export MRI_IMAGE=mri-dce-analysis:0.2.5
+     docker compose build
+     bash mri-docker.sh run --help
+   - This build installs dependencies and downloads and verifies the model.
+     Keep MRI_IMAGE set to the built image in every subsequent Docker shell.
 
-4) Verify the installation on a real example exam:
+   Python virtual environment:
+   - Check for Python 3.10 and Git LFS; help me install missing prerequisites.
+     Create a dedicated environment and install the CPU runtime dependencies:
+     python3.10 -m venv .venv
+     source .venv/bin/activate
+     python -m pip install --upgrade pip
+     python -m pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
+     python -m pip install '.[all]'
+   - Follow the model-download commands in docs/INSTALL.md: download the pinned
+     release, verify its SHA-256 and extract it into models/. Then set:
+     export MODEL_BUNDLE="$(pwd)/models/3D_landmarks_per_breast_v1"
+     Check for model/MLmodel and config/inference_config.json in that folder.
+   - Download and verify the example exams:
+     git lfs install
+     git lfs pull
+     sha256sum -c examples/SHA256SUMS
+   - Check the installed commands:
+     mri-dce-analysis --help
+     mri-viewer --help
+     dicom-info --help
+   - Activate this environment and set MODEL_BUNDLE in every subsequent shell.
+     Use the Python commands below for this choice; skip Docker setup entirely.
+
+4) Verify the chosen installation on a real example exam:
+   For either Docker choice:
    bash mri-docker.sh example duke --out ./results/example_duke
+   For the Python environment:
+   mri-dce-analysis run --input examples/dicom/duke --dicom --out ./results/example_duke --name duke --model-bundle "$MODEL_BUNDLE" --device cpu --motion --no-viewer
    Check results/example_duke/duke_pipeline.json for status "complete" and
    exams_failed = 0. Inspect the inference and motion summaries. Report any
    failure with the relevant log and resolve it before processing my dataset.
@@ -70,36 +110,53 @@ Install mri-dce-analysis and guide me through breast DCE MRI inference and revie
    these agreed values in the shell that runs the commands below, or replace
    the variables with the agreed values. Quote paths containing spaces. On
    Windows, use WSL2 paths such as /mnt/c/... for files on the C: drive.
+   For the Python viewer, also set VIEWER_HOST=127.0.0.1 for local access or
+   VIEWER_HOST=0.0.0.0 for access from another computer; see docs/DOCKER.md and
+   docs/VIEWER_PACKAGING.md for remote access and SSH tunnels.
 
 6) Check the input before inference:
    Follow docs/INPUT_DATASETS.md to identify each exam's reference and ordered
    DCE phases. DICOM and NIfTI are detected automatically. For an untidy input
-   folder, first inspect what can be organized:
+   folder, first inspect what can be organized using the chosen installation:
+   Docker:
    bash mri-docker.sh run --input "$INPUT_DIR" --out "$OUTPUT_DIR" --organize-check
+   Python:
+   mri-dce-analysis run --input "$INPUT_DIR" --out "$OUTPUT_DIR" --organize-check
    Explain any problems and resolve them with me. Add --organize to the actual
    run only when the layout needs it. For a JSON list of exam folders, follow
    the JSON instructions in docs/INPUT_DATASETS.md.
 
 7) Run inference and motion, then open the viewer on the results:
+   For either Docker choice, use the selected MRI_IMAGE:
    bash mri-docker.sh run --input "$INPUT_DIR" --out "$OUTPUT_DIR" --name "$RUN_NAME" --motion --viewer
-   For a JSON list of exams, use this command instead:
+   For a JSON list of exams, use this Docker command instead:
    bash mri-docker.sh run --input-json "$EXAMS_JSON" --out "$OUTPUT_DIR" --name "$RUN_NAME" --motion --viewer
-   Run this in a persistent terminal/process session. The --viewer option starts
-   the viewer after successful analysis and keeps the command running.
+   The wrapper starts the viewer after successful analysis and keeps running.
+
+   For the Python environment, run analysis first:
+   mri-dce-analysis run --input "$INPUT_DIR" --out "$OUTPUT_DIR" --name "$RUN_NAME" --model-bundle "$MODEL_BUNDLE" --device cpu --motion --no-viewer
+   For a JSON list of exams, use this Python command instead:
+   mri-dce-analysis run --input-json "$EXAMS_JSON" --out "$OUTPUT_DIR" --name "$RUN_NAME" --model-bundle "$MODEL_BUNDLE" --device cpu --motion --no-viewer
+   After successful analysis, start the Python viewer:
+   mri-dce-analysis viewer "$OUTPUT_DIR" --host "$VIEWER_HOST" --port 8060
+
+   Use a persistent terminal/process session for the chosen viewer command.
 
 8) Check the results and guide me in the viewer:
    Verify "$OUTPUT_DIR/${RUN_NAME}_pipeline.json" reports completion. Inspect
    failed exams and review flags. Check that the viewer responds, then give me
-   http://localhost:8060 if I am on the same computer, or the server address
-   printed by the script if I connect remotely. See docs/DOCKER.md for another
-   port, remote access or an SSH tunnel.
-   Help me select the run and exam, move through axial, sagittal and coronal
-   slices, adjust mask transparency, and save my accept/reject reviews for the
-   breast-region and nipple masks. Keep the viewer session running.
+   http://localhost:8060 if I am on the same computer, or a usable server address
+   or SSH tunnel if I connect remotely. For Docker, the script prints the server
+   address. Help me select the run and exam, move through axial, sagittal and
+   coronal slices, adjust mask transparency, and save my accept/reject reviews
+   for the breast-region and nipple masks. Keep the viewer session running.
 
 9) Explain how to return to the results:
    Tell me where results and reviews were saved. Show how to stop the viewer
-   with Ctrl+C and reopen the saved run without rerunning inference:
+   with Ctrl+C and reopen the saved run without rerunning inference.
+   For Docker, with the same selected MRI_IMAGE:
    bash mri-docker.sh viewer "$OUTPUT_DIR"
+   For Python, with the same environment active:
+   mri-dce-analysis viewer "$OUTPUT_DIR" --host "$VIEWER_HOST" --port 8060
    Keep the original NIfTI input folder available so its images remain viewable.
 ```
