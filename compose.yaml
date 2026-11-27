@@ -1,0 +1,48 @@
+# docker compose build                                  # once: installs everything, downloads the model
+# docker compose run --rm mri example duke              # bundled DICOM example -> results/example_duke
+# docker compose run --rm mri run --input /data/exams --dicom --out study --motion
+# RUN_DIR=example_duke docker compose up viewer         # http://localhost:8060
+# See docs/DOCKER.md.
+
+x-mri: &mri
+  image: ${MRI_IMAGE:-mri-dce-analysis:0.2.5}
+  build:
+    context: .
+    args:
+      TORCH_VARIANT: cpu
+  # Results on the host belong to this user; set UID/GID in .env (see .env.example).
+  user: "${UID:-1000}:${GID:-1000}"
+  init: true
+  shm_size: 2gb
+  volumes:
+    - ${DATA_DIR:-./data}:/data:ro
+    - ${OUT_DIR:-./results}:/out
+
+services:
+  mri:
+    <<: *mri
+
+  viewer:
+    <<: *mri
+    command: ["viewer", "/out/${RUN_DIR:-example_duke}", "--port", "8060"]
+    ports:
+      # Reachable from other computers by default; set VIEWER_BIND=127.0.0.1 for this machine only.
+      - "${VIEWER_BIND:-0.0.0.0}:${VIEWER_PORT:-8060}:8060"
+    restart: unless-stopped
+
+  # GPU inference: docker compose --profile gpu run --rm mri-gpu run ... --device cuda
+  mri-gpu:
+    <<: *mri
+    image: ${MRI_GPU_IMAGE:-mri-dce-analysis:0.2.5-cu124}
+    build:
+      context: .
+      args:
+        TORCH_VARIANT: cu124
+    profiles: ["gpu"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

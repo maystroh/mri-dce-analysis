@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MRI analysis · Run explorer</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script defer src="/static/motion.js"></script>
+  <script defer src="/static/app.js"></script>
+</head>
+<body>
+  <header><div><span class="eyebrow">MRI ANALYSIS</span><h1>Run explorer</h1></div>
+    <label>Analysis run <select id="run"></select></label><button id="export" title="Download one zip with the saved review files of every run and mask_reviews.json">Export reviews</button>
+  </header>
+  <div id="status" role="status">Loading analysis…</div>
+  <div class="layout">
+    <aside>
+      <h2>Cases <span id="count"></span></h2>
+      <input id="search" type="search" placeholder="Find a case" aria-label="Find a case">
+      <label class="check"><input id="review-only" type="checkbox"> QC review queue only</label>
+      <label class="check"><input id="unreviewed-only" type="checkbox"> Not reviewed yet only</label>
+      <div class="progress" aria-hidden="true"><i id="progress-bar"></i></div>
+      <div id="cases"></div>
+      <p class="hint">J / K: next / previous case.<br>Click the image to set the slice of the other view.</p>
+    </aside>
+    <main>
+      <div id="summary" class="summary"></div>
+      <section class="workspace">
+        <div class="case-heading"><div><span class="eyebrow">EXAM</span><h2 id="case-title">Select a case</h2></div><span id="case-status"></span></div>
+        <div class="toolbar">
+          <label>Overlay <select id="mode"><option value="contours">Contours</option><option value="prediction">Prediction</option><option value="ground_truth">Annotation</option><option value="errors">Error map</option><option value="image">MRI only</option></select></label>
+          <label>Structure <select id="layer"><option value="both">Region + nipple</option><option value="region">Breast region</option><option value="nipple">Nipple</option></select></label>
+          <label>Opacity <input id="opacity" type="range" min="0" max="1" step="0.05" value="0.45"></label>
+          <label>Window low <input id="low" type="number" step="any"></label><label>High <input id="high" type="number" step="any"></label>
+          <label>View <select id="view"><option value="axial" selected>Axial</option><option value="sagittal">Sagittal</option><option value="coronal">Coronal</option></select></label>
+        </div>
+        <div class="jumps"><button id="jump-gt">Annotation nipple</button><button id="jump-pred">Selected nipple</button><button id="jump-error">Largest disagreement</button><span class="legend"><i class="pred"></i>Prediction <i class="gt"></i>Annotation <i class="overlap"></i>Overlap in error map</span></div>
+        <p id="warnings" class="warnings"></p>
+        <div id="planes" class="planes"></div>
+        <div id="metrics" class="metrics"></div>
+              </section>
+      <section id="review-panel" class="review-panel" aria-label="Review this case">
+        <div class="review-head"><h2>Review</h2><span id="review-progress"></span><span class="hint">Keys: 1 Accurate · 2 Incorrect · 3 Needs review (all masks) · Enter save &amp; next · J/K move</span></div>
+        <div class="review-grid"><fieldset class="choice"><legend>All masks</legend><label class="d-accurate"><input type="radio" name="overall" value="Accurate"><span>Accurate</span></label><label class="d-incorrect"><input type="radio" name="overall" value="Incorrect"><span>Incorrect</span></label><label class="d-needs"><input type="radio" name="overall" value="Needs review"><span>Needs review</span></label></fieldset><fieldset class="choice"><legend>Breast region</legend><label class="d-same"><input type="radio" name="region" value=""><span id="same-region">Same</span></label><label class="d-accurate"><input type="radio" name="region" value="Accurate"><span>Accurate</span></label><label class="d-incorrect"><input type="radio" name="region" value="Incorrect"><span>Incorrect</span></label><label class="d-needs"><input type="radio" name="region" value="Needs review"><span>Needs review</span></label></fieldset><fieldset class="choice"><legend>Nipple</legend><label class="d-same"><input type="radio" name="nipple" value=""><span id="same-nipple">Same</span></label><label class="d-accurate"><input type="radio" name="nipple" value="Accurate"><span>Accurate</span></label><label class="d-incorrect"><input type="radio" name="nipple" value="Incorrect"><span>Incorrect</span></label><label class="d-needs"><input type="radio" name="nipple" value="Needs review"><span>Needs review</span></label></fieldset><label class="note">Note <input id="note" placeholder="Optional finding"></label><div class="review-actions"><button id="prev-case" title="Previous case, without saving">&lsaquo; Previous</button><button id="next-case" title="Next case, without saving">Next &rsaquo;</button><button id="save-next" class="primary">Save &amp; next</button><button id="clear-review">Clear</button></div></div>
+        <p id="review-saved" class="hint review-hint" role="status"></p>
+      </section>
+      <section id="motion-panel"><h2>Motion between phases</h2><p id="motion-status"></p><div id="motion-results"></div></section>
+      <section><h2>Quality control · this exam</h2><p class="hint">Red values need attention.</p><div id="case-qc" class="qc-grid"></div></section>
+      <section><h2>Run summary</h2><div id="run-qc" class="qc-grid"></div></section>
+      <section><h2>Downloads and run artifacts</h2>
+        <h3 class="sub">Downloads</h3>
+        <div class="downloads"><a id="case-download" download></a><a id="run-download" download></a><a id="reviews-csv" download></a><a id="reviews-json" download></a><button id="export-reviews">All reviews (zip)</button></div>
+        <p class="hint">Saved reviews download after the first review of the run is saved.</p>
+        <h3 class="sub">Saved files</h3><p class="hint">Open saved tables, figures, reports and logs. Download preserves the original file.</p><div id="artifacts" class="artifacts"></div><div id="artifact-preview"></div></section>
+    </main>
+  </div>
+</body>
+</html>

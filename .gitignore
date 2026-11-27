@@ -1,0 +1,52 @@
+out/
+__pycache__/
+*.pyc
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+
+# working artifacts the pipeliner writes into the cwd when it runs
+cases_summary.pickle.gzip
+flat_cases.pickle.gzip
+flat_cases_store.csv
+mapping_store.pickle.gzip
+mapped_cases_store.pickle.gzip
+paths_mapping.pickle.gzip
+dicompipelining-config_autodoc_*.json
+
+# Local model caches
+models_cache/
+mlruns/
+
+.venv*/
+.env
+.env.*
+!.env.example
+*.dcm
+*.nii
+*.nii.gz
+*.pt
+*.pth
+*.ckpt
+*.pickle*
+*.dill
+
+/data/
+/datasets/
+/annotations/
+*.tar.gz
+/spaces/
+
+# Reviewed public dataset examples
+!examples/dicom/duke/Breast_MRI_237/*/*.dcm
+!examples/nifti/odelia/0059120514/Pre.nii.gz
+!examples/nifti/odelia/0059120514/Post_[1-5].nii.gz
+/results/
+.gstack/
+
+# Local developer tooling
+.claude/
+.codex/
+.agents/
+.ruff_cache/

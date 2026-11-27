@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mri-dce-analysis"
+version = "0.2.5"
+authors = [{name = "Hera-MI"}, {name = "Hassan Alhajj"}]
+description = "Standalone breast DCE MRI geometry, landmarks, motion and artifact review"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "CC-BY-NC-SA-4.0"
+license-files = ["LICENSE", "NOTICE.md"]
+dependencies = [
+    "numpy>=1.23,<2", "pandas>=1.5,<3", "nibabel>=5,<6", "scipy>=1.9,<2",
+    "scikit-image>=0.21,<0.25", "opencv-python-headless>=4.8,<5",
+    "Flask>=2.3,<4", "Pillow>=9", "waitress>=2.1,<4", "openpyxl>=3.1,<4",
+]
+
+[project.optional-dependencies]
+motion = ["SimpleITK>=2.2,<3"]
+analysis = ["SimpleITK>=2.2,<3", "torch==2.6.0", "mlflow>=2.0,<4", "PyYAML>=6,<7",
+            "segmentation-models-pytorch-3d==1.0.2"]
+dicom = ["pydicom>=2.4,<3", "dicom2nifti>=2.5,<2.6",
+         "dill>=0.3.8,<0.4", "pymongo>=4,<5", "cloudpickle>=2,<4",
+         "importlib-metadata>=6", "tomli>=2; python_version<'3.11'", "PyYAML>=6,<7"]
+all = ["mri-dce-analysis[analysis,motion,dicom]"]
+
+[project.scripts]
+mri-analysis = "mri_analysis.cli:main"
+mri-dce-analysis = "mri_analysis.cli:main"
+mri-viewer = "mri_analysis.viewer:main"
+dicom-info = "mri_dicom_pipeliner.dicom.metadata_exporter:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["mri_analysis*", "mri_transforms*", "mri_dicom_pipeliner*", "_mri_toolbox*"]
+
+[tool.setuptools.package-data]
+mri_analysis = ["web/*.html", "web/*.js", "web/*.css"]

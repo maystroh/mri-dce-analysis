@@ -1,0 +1,4 @@
+examples/dicom/duke/Breast_MRI_237/**/*.dcm filter=lfs diff=lfs merge=lfs -text
+examples/nifti/odelia/0059120514/*.nii.gz filter=lfs diff=lfs merge=lfs -text
+*.sh text eol=lf
+Dockerfile text eol=lf

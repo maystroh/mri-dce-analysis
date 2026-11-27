@@ -1,0 +1,12 @@
+include README.md
+include LICENSE
+include NOTICE.md
+recursive-include docs *.md *.json
+recursive-include models *.md *.json
+recursive-include src/scripts *.sh
+recursive-include examples *.md *.csv
+include examples/SHA256SUMS
+recursive-exclude examples *.dcm *.nii *.nii.gz
+recursive-include constraints *.txt
+prune out
+prune spaces
