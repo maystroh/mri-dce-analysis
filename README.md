@@ -19,13 +19,14 @@ The project paper link will be added soon.
 ## For agents
 
 Copy the instructions below into any AI coding agent with terminal access to the
-computer that will run the analysis. If Git is not
-installed, help the user install it before cloning.
+computer that will run the analysis.
 
 ```text
 Install mri-dce-analysis and guide me through breast DCE MRI inference and review.
 
-1) Clone the project:
+1) Check Git and clone the project:
+   git --version
+   If Git is missing, help me install it before cloning. Then run:
    git clone https://github.com/maystroh/mri-dce-analysis
    If it is already cloned, reuse that checkout after verifying its origin URL.
 
