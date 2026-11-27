@@ -2,6 +2,8 @@
 
 For human readers: [full installation, analysis and viewer guide](docs/USER_GUIDE.md).
 
+The project paper link will be added soon.
+
 ## For agents
 
 Copy the instructions below into any AI coding agent with terminal access to the

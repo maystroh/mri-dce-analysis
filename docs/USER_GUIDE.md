@@ -252,6 +252,10 @@ mri-dce-analysis viewer out/study --open
 Use `mri-dce-analysis --help` to explore the available commands.
 Try the [real DICOM and ODELIA NIfTI examples](../examples/README.md) for complete DCE workflows.
 
+## Paper
+
+The project paper link will be added soon.
+
 ## License
 
 Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) ([full text](../LICENSE)).
